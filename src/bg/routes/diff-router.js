@@ -23,6 +23,11 @@ const RouterSets = {
             title: '采集列表'
         });
     },
+    '/overall': (req, res) => {
+        res.render('diff/overall', {
+            title: '全景图'
+        });
+    },
     '/detail': (req, res) => {
         const query = req.query;
         // 需要安全的处理一下传入的参数,不要直接传递
@@ -139,6 +144,7 @@ const RouterSets = {
  * */
 router.get('', RouterSets['/list']);
 router.get('/list', RouterSets['/list']);
+router.get('/overall', RouterSets['/overall']);
 router.get('/detail', RouterSets['/detail']);
 router.get('/view-for-mail', RouterSets['/view-for-mail']);
 

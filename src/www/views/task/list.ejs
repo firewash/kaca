@@ -66,8 +66,9 @@
                     <td>{{item.scheduled}}</td>
                     <td><span class={{item.enabled?"enabled":""}}>{{item.enabled}}</span></td>
                     <td>
+                        <button class="view_overall" value="{{item._id}}" title="最近几次的全景">全景</button>
+                        <button class="view_capture_list" value="{{item._id}}">列表</button>
                         <button class="task_setting"  value="{{item._id}}">编辑</button>
-                        <button class="view_capture_list" value="{{item._id}}">查看监控结果</button>
                         <button class="run_task" value="{{item._id}}">立即执行一次</button>
                     </td>
                 </tr>
@@ -163,6 +164,10 @@
         });
         $("#list").on('click', '.view_capture_list', function(e){
             var url = "/diff/list/#taskid="+ e.target.value;
+            window.open(url);
+        });
+        $("#list").on('click', '.view_overall', function(e){
+            var url = "/diff/overall/#taskid="+ e.target.value;
             window.open(url);
         });
 
