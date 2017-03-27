@@ -8,8 +8,11 @@ function date2str(date){ //date object , or date string.
     if(date){
         var d = new Date(date);
         str = (new Date(date)).toLocaleString();
-        if(d.toDateString() == ((new Date).toDateString())){
+        var today = new Date();
+        if(d.toDateString() == today.toDateString()){
             str += " (今天)";
+        }else if(d.toDateString() == (new Date(today.getFullYear(),today.getMonth(),today.getDate()-1)).toDateString()){
+            str += " (昨天)";
         }
     }
     return str;
