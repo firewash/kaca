@@ -4,6 +4,8 @@ const rename = require('gulp-rename');
 const uglify = require('gulp-uglify');
 const nodemon = require('gulp-nodemon');
 const livereload = require('gulp-livereload');
+var webpack = require('gulp-webpack');
+
 
 /**
  * 后台相关的任务
@@ -38,7 +40,8 @@ gulp.task('bg-watch', () => {
  * 网站相关的任务
  */
 gulp.task('www-compiler', () => {
-    return gulp.src('src/www/**').pipe(gulp.dest('build/www'));
+    return gulp.src(['src/www/**','!src/www/**.jsx'])
+                .pipe(gulp.dest('build/www'));
 });
 
 gulp.task('third-web-lib', () => {
@@ -63,12 +66,18 @@ gulp.task('self-js', () => {
         .pipe(livereload());
 });
 
+gulp.task('webpackTask', function(callback) {
+    return gulp.src('src/www/public/js/task/realtime-queue-view.jsx')
+      .pipe(webpack( require('./webpack.config.js') ))
+      .pipe(gulp.dest('build/www/public/js/task/realtime-queue-view.js'));
+});
+
 gulp.task('www-watch', () => {
     livereload.listen();
-    return gulp.watch('src/www/**', ['www-compiler', 'self-js']);
+    return gulp.watch('src/www/**', ['www-compiler', 'self-js', 'webpackTask']);
 });
 
 gulp.task('bg', ['bg-compiler', 'bg-service', 'bg-watch']);
-gulp.task('www', ['www-compiler', 'third-web-lib', 'self-js', 'www-watch']);
+gulp.task('www', ['www-compiler', 'third-web-lib', 'self-js', 'www-watch', 'webpackTask']);
 
 gulp.task('default', ['bg', 'www']);

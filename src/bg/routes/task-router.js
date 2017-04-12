@@ -26,6 +26,13 @@ router.get('/list', (req, res) => {
         });
 });
 
+
+router.get('/realtime-queue-view', (req, res) => {
+    res.render('task/realtime-queue-view', {
+
+    });
+});
+
 router.get('/ignorearea', (req, res) => {
     res.render('task/ignorearea');
 });

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>全景图</title>
+    <% include ../common-head.ejs %>
+    <style>
+        .overalllist{
+            white-space: nowrap;
+        }
+        .overalllist li{
+            width:300px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .overalllist .img-wrapper{
+            display: block;
+            margin:5px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .overalllist img{
+            float: left;
+            width:100%;
+        }
+        .overalllist .img-wrapper .diffimg{
+            margin-left:-100%;
+        }
+        /*.overalllist .img-wrapper:hover .diffimg{*/
+            /*display: none;*/
+        /*}*/
+        /* 此页面特殊，对一些公共样式做特殊处理 */
+        .nav {
+            position: fixed;
+            width: 100%;
+            top:0;
+        }
+        .page-header {
+            margin: 65px 0 20px;
+        }
+    </style>
+</head>
+<body>
+<% include ../nav.ejs %>
+<div class="page-header">
+    <h1><%= title %></h1>
+</div>
+<div id="content">
+    <ul id="capture_list" class="overalllist">
+        <li v-for="item in listData" data-track="_id">
+            <div v-bind:title="'id:'+item._id+'\n'" v-html="item.timestamp_capture_complete | date2StrFilter">
+
+            </div>
+            <a class="img-wrapper" href="/diff/detail?_id={{item._id}}" target="_blank">
+                <img class="originimg" v-bind:src="'/capture/'+item.filename+'.png'"/>
+                <img class="diffimg" v-if="item.diffinfo && item.diffinfo.diffimg" v-bind:src="'/capture/'+item.diffinfo.diffimg+'.png'">
+            </a>
+        </li>
+    </ul>
+</div>
+</body>
+<script>
+    'use strict';
+    var detail_url = "/diff/detail",
+        capture_list_url = "/api/capture/list",
+            taskid = null,
+        defaultStartIndex = 0,
+        defaultlimit = 5,
+        pageInfo = {
+            totolCount: 0,
+            currentStartIndex: 0,
+            limit: 15
+        }, condition = null,
+        appData={
+            listData:[]
+        };
+
+    function loadCaptureListData(condition) {
+        $.post(capture_list_url, condition, function (result) {
+            console.log(result);
+            if (result.err) {
+                alert("something error. look console.");
+            } else {
+                appData.listData = result.data;
+                pageInfo.currentStartIndex = result.begin;
+                pageInfo.totolCount = result.totalCount;
+            }
+        });
+    }
+
+
+    function dataInit(){
+        var hash = document.location.hash;
+        var condition = {
+            begin: pageInfo.currentStartIndex,
+            limit: pageInfo.limit
+        };
+        if(hash){
+            var arr = hash.substr(1).split("&");
+            arr.forEach(function(item) {
+                var t = item.split("=");
+                if(t.length == 2){
+                    window[t[0]]=t[1];
+                }
+            })
+        }
+    }
+    $(function () {
+        dataInit();
+        condition = {
+            taskid: taskid,
+            begin: 0, // 检索时，就从第一个开始
+            limit: pageInfo.limit
+        };
+         new Vue({
+            el: document.body,
+            data: appData,
+             filters:{
+                 date2StrFilter:function(value){
+                     return date2str(value);
+                 }
+             }
+        })
+        loadCaptureListData(condition);
+
+        document.getElementById("capture_list").onmousedown = function(e){
+            if(e.button === 1 && e.buttons === 4){
+                console.log('点击了滚轮，禁止');
+                e.preventDefault();
+                return false;
+            }
+        };
+    });
+
+</script>
+</html>
