@@ -53,6 +53,9 @@ gulp.task('third-web-lib', () => {
 
     gulp.src('node_modules/bootstrap/dist/**')
         .pipe(gulp.dest('build/www/public/bootstrap'));
+
+    gulp.src(['node_modules/react/dist/react.js','node_modules/react-dom/dist/react-dom.js'])
+      .pipe(gulp.dest('build/www/public/react'));
 });
 
 gulp.task('self-js', () => {
@@ -69,7 +72,7 @@ gulp.task('self-js', () => {
 gulp.task('webpackTask', function(callback) {
     return gulp.src('src/www/public/js/task/realtime-queue-view.jsx')
       .pipe(webpack( require('./webpack.config.js') ))
-      .pipe(gulp.dest('build/www/public/js/task/realtime-queue-view.js'));
+      .pipe(gulp.dest('build/www/public/js/task'));
 });
 
 gulp.task('www-watch', () => {

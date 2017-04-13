@@ -17,8 +17,9 @@ var config = {
       }
     ]
   },
-  external:{
-    //'react':'React'
+  externals:{
+    'react':'React',
+    'react-dom':'ReactDOM'
   }
 
 };
